@@ -5,6 +5,7 @@ import type {
   ProductRepository,
   UpdateProductInput,
 } from "@/lib/repositories/interfaces";
+import { slugifyProductName } from "@/lib/utils";
 import type { Product } from "@/types/domain";
 
 let productsState = [...mockProducts];
@@ -54,9 +55,14 @@ export const mockProductRepository: ProductRepository = {
     return productsState.find((product) => product.id === id) ?? null;
   },
 
+  async findBySlug(slug) {
+    return productsState.find((product) => product.slug === slug) ?? null;
+  },
+
   async create(input: CreateProductInput) {
     const created: Product = {
       id: uuidMock(),
+      slug: slugifyProductName(input.name),
       created_at: new Date().toISOString(),
       ...input,
     };
@@ -70,7 +76,11 @@ export const mockProductRepository: ProductRepository = {
       throw new Error("Produto não encontrado.");
     }
 
-    const updated = { ...existing, ...input };
+    const updated = {
+      ...existing,
+      ...input,
+      ...(input.name ? { slug: slugifyProductName(input.name) } : {}),
+    };
     productsState = productsState.map((product) =>
       product.id === id ? updated : product,
     );

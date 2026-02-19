@@ -13,7 +13,7 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card data-product-card className="interactive-lift group overflow-hidden">
-      <Link href={`/produto/${product.id}`} className="block">
+      <Link href={`/produto/${product.slug}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100">
           <Image
             src={product.images[0] ?? "/branding/05.jpg"}

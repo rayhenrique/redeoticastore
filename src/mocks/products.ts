@@ -3,6 +3,7 @@ import type { Product } from "@/types/domain";
 export const mockProducts: Product[] = [
   {
     id: "a1111111-1111-4111-8111-111111111111",
+    slug: "solar-street-black",
     created_at: "2026-02-18T10:30:00.000Z",
     name: "Solar Street Black",
     description: "Armação solar retangular com acabamento fosco.",
@@ -14,6 +15,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "b2222222-2222-4222-8222-222222222222",
+    slug: "solar-mood-carnaval",
     created_at: "2026-02-17T13:15:00.000Z",
     name: "Solar Mood Carnaval",
     description: "Óculos solar oversized com lentes degradê.",
@@ -25,6 +27,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "c3333333-3333-4333-8333-333333333333",
+    slug: "grau-classic-light",
     created_at: "2026-02-16T09:40:00.000Z",
     name: "Grau Classic Light",
     description: "Armação de grau leve para uso diário.",
@@ -36,6 +39,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "d4444444-4444-4444-8444-444444444444",
+    slug: "grau-urban-slim",
     created_at: "2026-02-14T11:05:00.000Z",
     name: "Grau Urban Slim",
     description: "Armação de grau moderna com ponte anatômica.",
@@ -47,6 +51,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "e5555555-5555-4555-8555-555555555555",
+    slug: "solar-gold-drop",
     created_at: "2026-02-12T08:20:00.000Z",
     name: "Solar Gold Drop",
     description: "Modelo premium com acabamento dourado.",

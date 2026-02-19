@@ -25,6 +25,17 @@ export function sanitizePhoneNumber(value: string) {
   return value.replace(/\D/g, "");
 }
 
-export function buildAbsoluteProductUrl(productId: string, siteUrl: string) {
-  return new URL(`/produto/${productId}`, siteUrl).toString();
+export function slugifyProductName(name: string) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+export function buildAbsoluteProductUrl(productSlug: string, siteUrl: string) {
+  return new URL(`/produto/${productSlug}`, siteUrl).toString();
 }

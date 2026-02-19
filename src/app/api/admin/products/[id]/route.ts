@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminForApi } from "@/lib/guards/admin";
 import { getProductRepository } from "@/lib/repositories";
+import { productImagesSchema } from "@/lib/validators/product";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -20,6 +21,18 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       category?: "solar" | "grau";
       images?: string[];
     };
+
+    if (payload.images !== undefined) {
+      const parsedImages = productImagesSchema.safeParse(payload.images);
+      if (!parsedImages.success) {
+        return NextResponse.json(
+          { error: parsedImages.error.issues[0]?.message ?? "Imagens inválidas." },
+          { status: 400 },
+        );
+      }
+      payload.images = parsedImages.data;
+    }
+
     const { id } = await params;
     const repository = getProductRepository();
     const product = await repository.update(id, payload);

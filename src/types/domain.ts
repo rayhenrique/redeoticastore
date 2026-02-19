@@ -4,6 +4,7 @@ export type LeadStatus = "new" | "contacted" | "sold" | "archived";
 
 export interface Product {
   id: string;
+  slug: string;
   created_at: string;
   name: string;
   description: string | null;

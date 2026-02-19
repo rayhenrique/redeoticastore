@@ -29,7 +29,7 @@ export async function executeCheckout(
     name: product.name,
     price: product.price,
     quantity: itemsById.get(product.id)?.quantity ?? 1,
-    url: buildAbsoluteProductUrl(product.id, siteUrl),
+    url: buildAbsoluteProductUrl(product.slug, siteUrl),
   }));
 
   const lead = await leadRepository.create({

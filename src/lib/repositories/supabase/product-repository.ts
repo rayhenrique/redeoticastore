@@ -4,6 +4,7 @@ import type {
   ProductRepository,
   UpdateProductInput,
 } from "@/lib/repositories/interfaces";
+import { slugifyProductName } from "@/lib/utils";
 import type { Product } from "@/types/domain";
 
 function normalizePrice(value: unknown) {
@@ -14,10 +15,12 @@ function normalizePrice(value: unknown) {
 }
 
 function mapProduct(row: Record<string, unknown>): Product {
+  const name = String(row.name);
   return {
     id: String(row.id),
+    slug: row.slug ? String(row.slug) : slugifyProductName(name),
     created_at: String(row.created_at),
-    name: String(row.name),
+    name,
     description: row.description ? String(row.description) : null,
     price: normalizePrice(row.price),
     images: Array.isArray(row.images)
@@ -72,11 +75,26 @@ export const supabaseProductRepository: ProductRepository = {
     return mapProduct(data);
   },
 
-  async create(input: CreateProductInput) {
+  async findBySlug(slug) {
     const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase
       .from("products")
-      .insert(input)
+      .select("*")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    if (!data) return null;
+
+    return mapProduct(data);
+  },
+
+  async create(input: CreateProductInput) {
+    const supabase = await createServerSupabaseClient();
+    const slug = slugifyProductName(input.name);
+    const { data, error } = await supabase
+      .from("products")
+      .insert({ ...input, slug })
       .select("*")
       .single();
 
@@ -86,9 +104,13 @@ export const supabaseProductRepository: ProductRepository = {
 
   async update(id: string, input: UpdateProductInput) {
     const supabase = await createServerSupabaseClient();
+    const updatePayload = {
+      ...input,
+      ...(input.name ? { slug: slugifyProductName(input.name) } : {}),
+    };
     const { data, error } = await supabase
       .from("products")
-      .update(input)
+      .update(updatePayload)
       .eq("id", id)
       .select("*")
       .single();

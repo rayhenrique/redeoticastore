@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServiceRoleSupabaseClient } from "@/lib/supabase/admin";
 import type { CreateLeadInput, LeadRepository } from "@/lib/repositories/interfaces";
 import type { Lead, LeadProductSnapshot, LeadStatus } from "@/types/domain";
 
@@ -28,7 +29,8 @@ export const supabaseLeadRepository: LeadRepository = {
   },
 
   async create(input: CreateLeadInput) {
-    const supabase = await createServerSupabaseClient();
+    // Checkout público pode chegar sem sessão autenticada; usa service role no backend.
+    const supabase = createServiceRoleSupabaseClient();
     const { data, error } = await supabase
       .from("leads")
       .insert({

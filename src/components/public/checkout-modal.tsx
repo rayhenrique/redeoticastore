@@ -17,6 +17,17 @@ import { Label } from "@/components/ui/label";
 import { useCartStore } from "@/stores/cart-store";
 import type { CheckoutResponse } from "@/types/api";
 
+function maskWhatsapp(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (!digits) return "";
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 export function CheckoutModal() {
   const items = useCartStore((state) => state.items);
   const clear = useCartStore((state) => state.clear);
@@ -97,7 +108,9 @@ export function CheckoutModal() {
               id="checkout-whatsapp"
               placeholder="(82) 99999-9999"
               value={whatsapp}
-              onChange={(event) => setWhatsapp(event.target.value)}
+              onChange={(event) => setWhatsapp(maskWhatsapp(event.target.value))}
+              inputMode="numeric"
+              maxLength={15}
             />
           </div>
         </div>

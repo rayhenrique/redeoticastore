@@ -12,7 +12,12 @@ interface ProductPageProps {
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
   const repository = getProductRepository();
-  const product = await repository.findById(id);
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    id,
+  );
+  const product = isUuid
+    ? await repository.findById(id)
+    : await repository.findBySlug(id);
 
   if (!product || !product.active) notFound();
 

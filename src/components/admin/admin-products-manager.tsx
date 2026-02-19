@@ -28,8 +28,18 @@ interface ProductFormState {
   category: string;
   price: string;
   description: string;
-  image: string;
+  images: string[];
   active: boolean;
+}
+
+const MAX_PRODUCT_IMAGES = 3;
+const defaultProductImage = "/branding/06.jpg";
+
+function normalizeProductImages(images: string[]) {
+  return images
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .slice(0, MAX_PRODUCT_IMAGES);
 }
 
 function buildInitialForm(defaultCategory: string): ProductFormState {
@@ -39,7 +49,7 @@ function buildInitialForm(defaultCategory: string): ProductFormState {
     category: defaultCategory,
     price: "",
     description: "",
-    image: "",
+    images: [""],
     active: true,
   };
 }
@@ -74,6 +84,7 @@ export function AdminProductsManager({
     setError(null);
 
     try {
+      const images = normalizeProductImages(form.images);
       const response = await fetch("/api/admin/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -83,7 +94,7 @@ export function AdminProductsManager({
           category: form.category,
           price: form.price ? Number(form.price) : null,
           description: form.description || null,
-          images: [form.image || "/branding/06.jpg"],
+          images: images.length ? images : [defaultProductImage],
           active: form.active,
         }),
       });
@@ -125,6 +136,7 @@ export function AdminProductsManager({
     setError(null);
 
     try {
+      const images = normalizeProductImages(editForm.images);
       const response = await fetch(`/api/admin/products/${editingProduct.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -134,7 +146,7 @@ export function AdminProductsManager({
           category: editForm.category,
           price: editForm.price ? Number(editForm.price) : null,
           description: editForm.description || null,
-          images: [editForm.image || "/branding/06.jpg"],
+          images: images.length ? images : [defaultProductImage],
           active: editForm.active,
         }),
       });
@@ -153,7 +165,7 @@ export function AdminProductsManager({
     }
   }
 
-  async function handleFileUpload(file: File) {
+  async function handleFileUpload(file: File, target: "create" | "edit", imageIndex: number) {
     setUploadingImage(true);
     setError(null);
 
@@ -171,7 +183,20 @@ export function AdminProductsManager({
         throw new Error(data.error ?? "Erro no upload da imagem.");
       }
 
-      setForm((current) => ({ ...current, image: data.url! }));
+      if (target === "create") {
+        setForm((current) => {
+          const images = [...current.images];
+          images[imageIndex] = data.url!;
+          return { ...current, images };
+        });
+        return;
+      }
+
+      setEditForm((current) => {
+        const images = [...current.images];
+        images[imageIndex] = data.url!;
+        return { ...current, images };
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro no upload da imagem.");
     } finally {
@@ -255,7 +280,10 @@ export function AdminProductsManager({
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="image">Imagem</Label>
+              <Label>Imagens</Label>
+              <p className="text-xs text-zinc-600">
+                Envie até 3 imagens por produto (1 principal + 2 adicionais).
+              </p>
               <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full border border-dashed border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
                 <Upload className="h-4 w-4" />
                 {uploadingImage ? "Enviando..." : "Enviar arquivo"}
@@ -266,18 +294,58 @@ export function AdminProductsManager({
                   disabled={uploadingImage}
                   onChange={(event) => {
                     const file = event.target.files?.[0];
-                    if (file) void handleFileUpload(file);
+                    if (file) void handleFileUpload(file, "create", 0);
                   }}
                 />
               </label>
-              <Input
-                id="image"
-                value={form.image}
-                placeholder="URL da imagem (auto preenchida no upload)"
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, image: event.target.value }))
-                }
-              />
+              <div className="space-y-2">
+                {Array.from({ length: MAX_PRODUCT_IMAGES }).map((_, index) => (
+                  <div key={`create-image-${index}`} className="space-y-2">
+                    <Label htmlFor={`image-${index}`}>
+                      {index === 0 ? "Imagem principal" : `Imagem ${index + 1}`}
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id={`image-${index}`}
+                        value={form.images[index] ?? ""}
+                        placeholder={
+                          index === 0
+                            ? "URL da imagem principal"
+                            : `URL da imagem ${index + 1} (opcional)`
+                        }
+                        onChange={(event) =>
+                          setForm((current) => {
+                            const images = [...current.images];
+                            images[index] = event.target.value;
+                            return { ...current, images };
+                          })
+                        }
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={uploadingImage}
+                        onClick={() =>
+                          document.getElementById(`upload-create-image-${index}`)?.click()
+                        }
+                      >
+                        Upload
+                      </Button>
+                    </div>
+                    <input
+                      id={`upload-create-image-${index}`}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploadingImage}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) void handleFileUpload(file, "create", index);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Descrição</Label>
@@ -359,7 +427,11 @@ export function AdminProductsManager({
                       category: product.category,
                       price: product.price?.toString() ?? "",
                       description: product.description ?? "",
-                      image: product.images[0] ?? "",
+                      images: [
+                        product.images[0] ?? "",
+                        product.images[1] ?? "",
+                        product.images[2] ?? "",
+                      ],
                       active: product.active,
                     });
                   }}
@@ -444,14 +516,53 @@ export function AdminProductsManager({
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-product-image">Imagem</Label>
-              <Input
-                id="edit-product-image"
-                value={editForm.image}
-                onChange={(event) =>
-                  setEditForm((current) => ({ ...current, image: event.target.value }))
-                }
-              />
+              <Label>Imagens</Label>
+              {Array.from({ length: MAX_PRODUCT_IMAGES }).map((_, index) => (
+                <div key={`edit-image-${index}`} className="space-y-2">
+                  <Label htmlFor={`edit-product-image-${index}`}>
+                    {index === 0 ? "Imagem principal" : `Imagem ${index + 1}`}
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id={`edit-product-image-${index}`}
+                      value={editForm.images[index] ?? ""}
+                      placeholder={
+                        index === 0
+                          ? "URL da imagem principal"
+                          : `URL da imagem ${index + 1} (opcional)`
+                      }
+                      onChange={(event) =>
+                        setEditForm((current) => {
+                          const images = [...current.images];
+                          images[index] = event.target.value;
+                          return { ...current, images };
+                        })
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={uploadingImage}
+                      onClick={() =>
+                        document.getElementById(`upload-edit-image-${index}`)?.click()
+                      }
+                    >
+                      Upload
+                    </Button>
+                  </div>
+                  <input
+                    id={`upload-edit-image-${index}`}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    disabled={uploadingImage}
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) void handleFileUpload(file, "edit", index);
+                    }}
+                  />
+                </div>
+              ))}
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-product-description">Descrição</Label>
