@@ -73,6 +73,8 @@ npm run build
 
 ## 7) Subir aplicação com PM2
 
+Execute como **usuário do site** (`kltecnologia-redeoticastore`):
+
 ```bash
 npm install -g pm2
 pm2 delete redeoticastore 2>/dev/null || true
@@ -82,14 +84,31 @@ pm2 save
 
 ## 8) Garantir inicialização automática no boot
 
+1. Ainda como **usuário do site**, rode:
+
 ```bash
 pm2 startup
 ```
 
-O comando acima vai imprimir outro comando final. Execute esse comando e depois:
+2. O comando acima vai imprimir um `sudo env ... pm2 startup ...`.
+   Execute esse comando como **root**, com caminho absoluto do PM2 do usuário:
+
+```bash
+sudo env PATH=$PATH:/home/kltecnologia-redeoticastore/.nvm/versions/node/v22.22.0/bin \
+/home/kltecnologia-redeoticastore/.nvm/versions/node/v22.22.0/lib/node_modules/pm2/bin/pm2 \
+startup systemd -u kltecnologia-redeoticastore --hp /home/kltecnologia-redeoticastore
+```
+
+3. Volte ao usuário do site e rode novamente:
 
 ```bash
 pm2 save
+```
+
+4. Opcional (como root), valide:
+
+```bash
+systemctl status pm2-kltecnologia-redeoticastore
 ```
 
 ## 9) Ativar SSL (Let's Encrypt) no CloudPanel
@@ -130,6 +149,12 @@ pm2 status
 pm2 logs redeoticastore --lines 100
 ss -lntp | grep 3009
 ```
+
+## Importante
+
+- Rode `pm2 start/restart/save` **somente no usuário do site**.
+- Use `root` apenas para `systemctl ...` e para o comando `pm2 startup ...`.
+- Não rode `npm start` manual quando o app já estiver no PM2.
 
 ## Referências oficiais
 
