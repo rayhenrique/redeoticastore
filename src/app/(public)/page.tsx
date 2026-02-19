@@ -41,7 +41,7 @@ export default async function HomePage() {
       }));
 
   return (
-    <div className="home-ambient space-y-10">
+    <div className="space-y-10">
       <div className="reveal-section" style={{ ["--reveal-delay" as string]: "40ms" }}>
         <HeroCarousel banners={homeBanners} />
       </div>
