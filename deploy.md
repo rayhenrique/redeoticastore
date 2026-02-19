@@ -23,7 +23,7 @@ No CloudPanel:
 3. Preencha:
    - Domain: `redeoticastore.kltecnologia.com`
    - Node.js Version: `22` (ou `20`)
-   - App Port: `3000`
+   - App Port: `3009`
 4. Concluir criação.
 
 ## 3) Acessar a VPS via SSH
@@ -75,7 +75,8 @@ npm run build
 
 ```bash
 npm install -g pm2
-pm2 start npm --name redeoticastore -- start
+pm2 delete redeoticastore 2>/dev/null || true
+pm2 start ecosystem.config.js
 pm2 save
 ```
 
@@ -118,7 +119,16 @@ cd ~/htdocs/redeoticastore.kltecnologia.com
 git pull origin main
 npm ci
 npm run build
-pm2 restart redeoticastore
+pm2 restart ecosystem.config.js --only redeoticastore
+pm2 save
+```
+
+## 12) Verificação rápida da porta
+
+```bash
+pm2 status
+pm2 logs redeoticastore --lines 100
+ss -lntp | grep 3009
 ```
 
 ## Referências oficiais
