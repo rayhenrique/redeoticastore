@@ -19,9 +19,19 @@ export const metadata: Metadata = {
   title: "Rede Ótica Store",
   description: "Catálogo digital com checkout via WhatsApp e mini-CRM.",
   manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Rede Ótica Store",
+  },
   icons: {
     icon: "/icons/icon-192.png",
-    apple: "/icons/icon-192.png",
+    apple: [
+      {
+        url: "/icons/apple-touch-icon.png",
+        sizes: "180x180",
+      },
+    ],
   },
 };
 
