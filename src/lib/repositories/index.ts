@@ -1,4 +1,3 @@
-import { dataProvider } from "@/lib/config";
 import type {
   BrandRepository,
   BannerRepository,
@@ -7,12 +6,6 @@ import type {
   ProductRepository,
   SiteUserRepository,
 } from "@/lib/repositories/interfaces";
-import { mockBrandRepository } from "@/lib/repositories/mock/brand-repository";
-import { mockBannerRepository } from "@/lib/repositories/mock/banner-repository";
-import { mockCategoryRepository } from "@/lib/repositories/mock/category-repository";
-import { mockLeadRepository } from "@/lib/repositories/mock/lead-repository";
-import { mockProductRepository } from "@/lib/repositories/mock/product-repository";
-import { mockSiteUserRepository } from "@/lib/repositories/mock/site-user-repository";
 import { supabaseBannerRepository } from "@/lib/repositories/supabase/banner-repository";
 import { supabaseBrandRepository } from "@/lib/repositories/supabase/brand-repository";
 import { supabaseCategoryRepository } from "@/lib/repositories/supabase/category-repository";
@@ -21,35 +14,25 @@ import { supabaseProductRepository } from "@/lib/repositories/supabase/product-r
 import { supabaseSiteUserRepository } from "@/lib/repositories/supabase/site-user-repository";
 
 export function getProductRepository(): ProductRepository {
-  return dataProvider === "supabase"
-    ? supabaseProductRepository
-    : mockProductRepository;
+  return supabaseProductRepository;
 }
 
 export function getLeadRepository(): LeadRepository {
-  return dataProvider === "supabase" ? supabaseLeadRepository : mockLeadRepository;
+  return supabaseLeadRepository;
 }
 
 export function getCategoryRepository(): CategoryRepository {
-  return dataProvider === "supabase"
-    ? supabaseCategoryRepository
-    : mockCategoryRepository;
+  return supabaseCategoryRepository;
 }
 
 export function getSiteUserRepository(): SiteUserRepository {
-  return dataProvider === "supabase"
-    ? supabaseSiteUserRepository
-    : mockSiteUserRepository;
+  return supabaseSiteUserRepository;
 }
 
 export function getBannerRepository(): BannerRepository {
-  return dataProvider === "supabase"
-    ? supabaseBannerRepository
-    : mockBannerRepository;
+  return supabaseBannerRepository;
 }
 
 export function getBrandRepository(): BrandRepository {
-  return dataProvider === "supabase"
-    ? supabaseBrandRepository
-    : mockBrandRepository;
+  return supabaseBrandRepository;
 }

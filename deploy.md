@@ -55,23 +55,29 @@ Exemplo base:
 NODE_ENV=production
 NEXT_PUBLIC_SITE_URL=https://redeoticastore.kltecnologia.com
 NEXT_PUBLIC_WHATSAPP_NUMBER=55SEUNUMERO
-DATA_PROVIDER=mock
-
-# Quando for usar Supabase:
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ADMIN_EMAIL_ALLOWLIST=admin@redeotica.com.br
 ```
 
-## 6) Instalar dependências e gerar build
+## 6) Aplicar migrations do Supabase via CLI
+
+```bash
+npm install -g supabase
+supabase login
+supabase link --project-ref <PROJECT_REF>
+supabase db push
+```
+
+## 7) Instalar dependências e gerar build
 
 ```bash
 npm ci
 npm run build
 ```
 
-## 7) Subir aplicação com PM2
+## 8) Subir aplicação com PM2
 
 Execute como **usuário do site** (`kltecnologia-redeoticastore`):
 
@@ -82,7 +88,7 @@ pm2 start ecosystem.config.js
 pm2 save
 ```
 
-## 8) Garantir inicialização automática no boot
+## 9) Garantir inicialização automática no boot
 
 1. Ainda como **usuário do site**, rode:
 
@@ -111,7 +117,7 @@ pm2 save
 systemctl status pm2-kltecnologia-redeoticastore
 ```
 
-## 9) Ativar SSL (Let's Encrypt) no CloudPanel
+## 10) Ativar SSL (Let's Encrypt) no CloudPanel
 
 No site:
 
@@ -120,7 +126,7 @@ No site:
 3. Selecione `redeoticastore.kltecnologia.com`
 4. Instale o certificado.
 
-## 10) Testar aplicação
+## 11) Testar aplicação
 
 - URL: `https://redeoticastore.kltecnologia.com`
 
@@ -131,18 +137,21 @@ pm2 status
 pm2 logs redeoticastore --lines 100
 ```
 
-## 11) Fluxo de atualização (novos deploys)
+## 12) Fluxo de atualização (novos deploys)
 
 ```bash
 cd ~/htdocs/redeoticastore.kltecnologia.com
 git pull origin main
+npm install -g supabase
+supabase link --project-ref <PROJECT_REF>
+supabase db push
 npm ci
 npm run build
 pm2 restart ecosystem.config.js --only redeoticastore
 pm2 save
 ```
 
-## 12) Verificação rápida da porta
+## 13) Verificação rápida da porta
 
 ```bash
 pm2 status

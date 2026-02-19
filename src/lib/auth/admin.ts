@@ -1,8 +1,4 @@
-import {
-  adminBypassAuth,
-  adminEmailAllowlist,
-  isSupabaseConfigured,
-} from "@/lib/config";
+import { adminEmailAllowlist, isSupabaseConfigured } from "@/lib/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export function isEmailAllowed(email?: string | null) {
@@ -11,14 +7,6 @@ export function isEmailAllowed(email?: string | null) {
 }
 
 export async function getCurrentAdminUser() {
-  if (adminBypassAuth) {
-    return {
-      id: "mock-admin",
-      email: adminEmailAllowlist[0] ?? "admin@redeotica.com.br",
-      aud: "mock",
-    };
-  }
-
   if (!isSupabaseConfigured) return null;
 
   const supabase = await createServerSupabaseClient();

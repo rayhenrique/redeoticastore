@@ -1,4 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@/lib/services/checkout", () => ({
+  executeCheckout: vi.fn(async () => ({
+    leadId: "f6666666-6666-4666-8666-666666666666",
+    whatsappUrl: "https://wa.me/5582996265666?text=ola",
+  })),
+}));
+
 import { POST } from "@/app/api/leads/checkout/route";
 
 describe("POST /api/leads/checkout", () => {

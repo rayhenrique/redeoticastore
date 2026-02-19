@@ -1,6 +1,5 @@
 import { CatalogFilters } from "@/components/public/catalog-filters";
 import { ProductCard } from "@/components/public/product-card";
-import { isMockMode } from "@/lib/config";
 import { getProductRepository } from "@/lib/repositories";
 
 interface CatalogPageProps {
@@ -40,7 +39,6 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           <CatalogFilters
             brands={brands}
             categories={categories}
-            showMockHints={isMockMode}
           />
         </div>
 

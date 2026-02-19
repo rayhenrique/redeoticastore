@@ -4,6 +4,15 @@ vi.mock("@/lib/guards/admin", () => ({
   requireAdminForApi: vi.fn(async () => null),
 }));
 
+vi.mock("@/lib/repositories", () => ({
+  getLeadRepository: vi.fn(() => ({
+    updateStatus: vi.fn(async (id: string, status: string) => ({
+      id,
+      status,
+    })),
+  })),
+}));
+
 import { PATCH } from "@/app/api/admin/leads/[id]/status/route";
 
 describe("PATCH /api/admin/leads/:id/status", () => {

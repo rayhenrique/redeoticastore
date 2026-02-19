@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { useCartStore } from "@/stores/cart-store";
-import { mockProducts } from "@/mocks/products";
+import { fixtureProducts } from "../fixtures/products";
 
 describe("cart store", () => {
   beforeEach(() => {
@@ -8,14 +8,14 @@ describe("cart store", () => {
   });
 
   it("adiciona item na sacola", () => {
-    useCartStore.getState().addItem(mockProducts[0]);
+    useCartStore.getState().addItem(fixtureProducts[0]);
     expect(useCartStore.getState().items).toHaveLength(1);
   });
 
   it("incrementa quantidade ao adicionar item repetido", () => {
     const store = useCartStore.getState();
-    store.addItem(mockProducts[0]);
-    store.addItem(mockProducts[0]);
+    store.addItem(fixtureProducts[0]);
+    store.addItem(fixtureProducts[0]);
 
     expect(useCartStore.getState().items[0]?.quantity).toBe(2);
   });

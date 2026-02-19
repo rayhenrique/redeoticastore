@@ -9,14 +9,9 @@ import { Input } from "@/components/ui/input";
 interface CatalogFiltersProps {
   brands: string[];
   categories: string[];
-  showMockHints?: boolean;
 }
 
-export function CatalogFilters({
-  brands,
-  categories,
-  showMockHints,
-}: CatalogFiltersProps) {
+export function CatalogFilters({ brands, categories }: CatalogFiltersProps) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
@@ -133,13 +128,6 @@ export function CatalogFilters({
             Limpar
           </Button>
         </div>
-
-        {showMockHints ? (
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-600">
-            Filtros extras de campanha (gênero/infantil/acessórios) aparecem no
-            modo mock e não persistem no banco do MVP.
-          </div>
-        ) : null}
       </div>
     </aside>
   );

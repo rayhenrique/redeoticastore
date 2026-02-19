@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClientSupabaseClient } from "@/lib/supabase/client";
-import { adminBypassAuth, isSupabaseConfigured } from "@/lib/config";
+import { isSupabaseConfigured } from "@/lib/config";
 
 interface LoginFormProps {
   nextPath?: string;
@@ -92,19 +92,6 @@ export function LoginForm({ nextPath = "/admin" }: LoginFormProps) {
               </>
             )}
           </Button>
-          {!isSupabaseConfigured && adminBypassAuth ? (
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => {
-                router.push(nextPath);
-                router.refresh();
-              }}
-            >
-              Entrar no modo demo
-            </Button>
-          ) : null}
         </form>
         {error ? (
           <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">

@@ -6,7 +6,6 @@ import { BrandsCarousel } from "@/components/public/brands-carousel";
 import { ProductCard } from "@/components/public/product-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { defaultHomeBanners } from "@/mocks/banners";
 import {
   getBannerRepository,
   getBrandRepository,
@@ -27,23 +26,14 @@ export default async function HomePage() {
     categoryRepository.list(),
   ]);
 
-  const homeBanners = banners.length ? banners : defaultHomeBanners;
   const activeCategories = categories.filter((category) => category.active);
   const highlights = products.slice(0, 4);
-  const visibleBrands = brands.length
-    ? brands
-    : [...new Set(products.map((product) => product.brand))].map((name) => ({
-        id: `fallback-${name}`,
-        created_at: new Date().toISOString(),
-        name,
-        image: "/branding/05.jpg",
-        active: true,
-      }));
+  const visibleBrands = brands;
 
   return (
     <div className="space-y-10">
       <div className="reveal-section" style={{ ["--reveal-delay" as string]: "40ms" }}>
-        <HeroCarousel banners={homeBanners} />
+        <HeroCarousel banners={banners} />
       </div>
 
       <section
